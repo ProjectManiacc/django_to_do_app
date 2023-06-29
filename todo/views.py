@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from todo.models import Task
 # Create your views here.
 
@@ -19,4 +19,18 @@ def markAsUndone(request, pk):
     task = get_object_or_404(Task, pk=pk)
     task.is_completed = False
     task.save()
+    return redirect('home')
+
+def editTask(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    if request.method == 'POST':
+        task.task = request.POST['task']
+        task.save()
+        return redirect('home')
+    else:
+        return render(request, 'edit_task.html', {'task': task})
+
+def deleteTask(request, pk):
+    task = get_object_or_404(Task, pk=pk)
+    task.delete()
     return redirect('home')
